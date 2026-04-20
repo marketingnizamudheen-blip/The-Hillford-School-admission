@@ -1173,7 +1173,7 @@
     return true;
   }
 
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwwULFeXXbnAjDgWIS9MJAzx0vFp-ltybOtZ15ptQ8k3i1qNc4tqIvEqD3Sc5aJm_6z/exec';
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbye6AC1tnQ30PCbzzY3XIfTUbLLICNEp1lNQEaELiy1GQVBqVEbmlQMPdJAOgj4FFua/exec';
 
   function submitForm() {
     if (!validateStep(5)) return;
@@ -1267,7 +1267,7 @@
     fetch(SHEET_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(data)
     })
     .then(() => {
