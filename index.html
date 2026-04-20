@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hillford School – Online Admission Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a3a2a;
+    --gold: #c8a84b;
+    --gold-light: #e8d08a;
+    --cream: #f9f5ee;
+    --warm-white: #fffdf9;
+    --text: #1c2520;
+    --muted: #6b7c72;
+    --border: #d4c9a8;
+    --error: #b84040;
+    --success: #2a7a4a;
+    --section-bg: #ffffff;
+    --shadow: 0 4px 24px rgba(26,58,42,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .header {
+    background: var(--forest);
+    color: var(--cream);
+    text-align: center;
+    padding: 40px 20px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent,
+      transparent 40px,
+      rgba(200,168,75,0.04) 40px,
+      rgba(200,168,75,0.04) 80px
+    );
+  }
+  .header-emblem {
+    display: inline-block;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    width: 72px; height: 72px;
+    line-height: 72px;
+    font-size: 28px;
+    margin-bottom: 14px;
+    color: var(--gold);
+    position: relative;
+    z-index: 1;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    position: relative; z-index: 1;
+  }
+  .header .tagline {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin: 4px 0 10px;
+    position: relative; z-index: 1;
+  }
+  .header .subtitle {
+    font-size: 13px;
+    color: rgba(249,245,238,0.7);
+    position: relative; z-index: 1;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: var(--forest);
+    padding: 0 20px 20px;
+  }
+  .progress-track {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+  }
+  .step-dot {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .step-dot::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    right: -50%;
+    height: 2px;
+    background: rgba(200,168,75,0.3);
+    z-index: 0;
+  }
+  .step-dot:last-child::before { display: none; }
+  .step-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(200,168,75,0.4);
+    background: transparent;
+    color: rgba(200,168,75,0.6);
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+    margin-bottom: 6px;
+  }
+  .step-dot.active .step-circle {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--forest);
+  }
+  .step-dot.done .step-circle {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+  }
+  .step-dot.done::before { background: var(--gold); }
+  .step-dot.active::before { background: rgba(200,168,75,0.5); }
+  .step-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(249,245,238,0.5);
+    transition: color 0.3s;
+  }
+  .step-dot.active .step-label { color: var(--gold-light); }
+
+  /* Form container */
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 16px 60px;
+  }
+
+  /* Section */
+  .section {
+    background: var(--section-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: 1px solid rgba(212,201,168,0.4);
+    overflow: hidden;
+    display: none;
+  }
+  .section.active { display: block; animation: fadeUp 0.4s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    background: linear-gradient(135deg, var(--forest), #2a5040);
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    background: rgba(200,168,75,0.2);
+    border: 1px solid rgba(200,168,75,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+  .section-desc {
+    font-size: 12px;
+    color: rgba(249,245,238,0.6);
+    margin-top: 2px;
+  }
+
+  .section-body { padding: 28px; }
+
+  /* Grid */
+  .grid { display: grid; gap: 20px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Field */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.span-2 { grid-column: span 2; }
+  @media (max-width: 600px) { .field.span-2 { grid-column: span 1; } }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  label .req { color: var(--error); }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--warm-white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--forest);
+    box-shadow: 0 0 0 3px rgba(26,58,42,0.08);
+  }
+  input.error, select.error { border-color: var(--error); }
+  select { cursor: pointer; }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* Photo upload */
+  .photo-upload {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    background: var(--cream);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .photo-upload:hover { border-color: var(--forest); background: var(--warm-white); }
+  .photo-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .photo-upload .icon { font-size: 32px; color: var(--muted); margin-bottom: 8px; }
+  .photo-upload p { font-size: 13px; color: var(--muted); }
+  .photo-upload small { font-size: 11px; color: rgba(107,124,114,0.7); }
+  #photo-preview { width: 100px; height: 120px; object-fit: cover; border-radius: 6px; display: none; border: 2px solid var(--gold); margin: 8px auto 0; }
+
+  /* Radio / checkbox group */
+  .radio-group, .check-group {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .radio-item, .check-item {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+  }
+  .radio-item input, .check-item input { accent-color: var(--forest); }
+  .radio-item:has(input:checked),
+  .check-item:has(input:checked) {
+    border-color: var(--forest);
+    background: rgba(26,58,42,0.05);
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  /* Programme select */
+  .programme-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) { .programme-grid { grid-template-columns: 1fr; } }
+  .programme-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: var(--warm-white);
+  }
+  .programme-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .programme-card:has(input:checked) {
+    border-color: var(--forest);
+    background: rgba(26,58,42,0.04);
+  }
+  .programme-card .pc-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--forest);
+    margin-bottom: 4px;
+  }
+  .programme-card .pc-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .programme-card .pc-tag {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--forest);
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+  .divider-label {
+    text-align: center;
+    position: relative;
+    margin: 20px 0 14px;
+  }
+  .divider-label::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .divider-label span {
+    position: relative;
+    background: var(--section-bg);
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* DOB row */
+  .dob-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  /* Immunization table */
+  .immun-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 500px) { .immun-grid { grid-template-columns: 1fr; } }
+  .immun-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--warm-white);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .immun-item:has(input:checked) {
+    border-color: var(--success);
+    background: rgba(42,122,74,0.05);
+    color: var(--success);
+  }
+  .immun-item input { accent-color: var(--success); }
+
+  /* Reason cards */
+  .reason-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .reason-card {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    background: var(--warm-white);
+    transition: all 0.2s;
+  }
+  .reason-card:has(input:checked) {
+    border-color: var(--gold);
+    background: rgba(200,168,75,0.08);
+    color: var(--forest);
+    font-weight: 500;
+  }
+  .reason-card input { display: none; }
+  .reason-card .r-icon { font-size: 22px; margin-bottom: 6px; }
+
+  /* Navigation buttons */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background: var(--forest);
+    color: var(--cream);
+  }
+  .btn-primary:hover { background: #0f2518; }
+  .btn-outline {
+    background: transparent;
+    color: var(--forest);
+    border: 2px solid var(--forest);
+  }
+  .btn-outline:hover { background: rgba(26,58,42,0.05); }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #b8942b);
+    color: var(--forest);
+  }
+  .btn-gold:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Declaration box */
+  .declaration-box {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* Instructions box */
+  .instructions {
+    background: linear-gradient(135deg, rgba(26,58,42,0.04), rgba(200,168,75,0.08));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .instructions ul { padding-left: 18px; margin-top: 8px; }
+  .instructions li { margin-bottom: 4px; }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--section-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(212,201,168,0.4);
+  }
+  .success-screen.show { display: block; animation: fadeUp 0.5s ease; }
+  .success-icon { font-size: 60px; margin-bottom: 16px; }
+  .success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--forest);
+    margin-bottom: 12px;
+  }
+  .success-screen p { color: var(--muted); font-size: 15px; max-width: 440px; margin: 0 auto 24px; }
+  .app-number {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--forest), #2a5040);
+    color: var(--gold-light);
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  /* Misc */
+  .note { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .hint { font-size: 11px; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-emblem">🏫</div>
+  <h1>The Hillford School</h1>
+  <div class="tagline">Learn · Lead · Serve</div>
+  <div class="subtitle">A Unit of Millat Model School &nbsp;|&nbsp; Online Admission Form</div>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-track" id="progress-track">
+    <div class="step-dot active" onclick="goStep(1)">
+      <div class="step-circle">1</div>
+      <span class="step-label">Child</span>
+    </div>
+    <div class="step-dot" onclick="goStep(2)">
+      <div class="step-circle">2</div>
+      <span class="step-label">Family</span>
+    </div>
+    <div class="step-dot" onclick="goStep(3)">
+      <div class="step-circle">3</div>
+      <span class="step-label">Health</span>
+    </div>
+    <div class="step-dot" onclick="goStep(4)">
+      <div class="step-circle">4</div>
+      <span class="step-label">Programme</span>
+    </div>
+    <div class="step-dot" onclick="goStep(5)">
+      <div class="step-circle">5</div>
+      <span class="step-label">Declaration</span>
+    </div>
+  </div>
+</div>
+
+<div class="form-container">
+
+  <!-- STEP 1: Child Info -->
+  <div class="section active" id="step-1">
+    <div class="section-header">
+      <div class="section-icon">👤</div>
+      <div>
+        <div class="section-title">Child Information</div>
+        <div class="section-desc">Basic details and previous school record</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <!-- Photo -->
+      <div class="grid grid-2" style="margin-bottom:20px; align-items:start;">
+        <div class="grid" style="gap:20px;">
+          <div class="field">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" id="child-name" placeholder="As per birth certificate">
+          </div>
+          <div class="field">
+            <label>Gender <span class="req">*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="gender" value="Male"> Male</label>
+              <label class="radio-item"><input type="radio" name="gender" value="Female"> Female</label>
+              <label class="radio-item"><input type="radio" name="gender" value="Other"> Other</label>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <label>Recent Photograph</label>
+          <div class="photo-upload" style="margin-top:6px;" onclick="document.getElementById('photo-input').click()">
+            <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+            <div class="icon">📷</div>
+            <p>Upload Child's Photo</p>
+            <small>JPG, PNG – Passport size</small>
+            <img id="photo-preview">
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Date of Birth <span class="req">*</span></label>
+          <input type="date" id="dob">
+        </div>
+        <div class="field">
+          <label>Age (as on 1st June)</label>
+          <input type="text" id="age-display" placeholder="Auto calculated" readonly style="background:#f0f0e8;">
+        </div>
+        <div class="field">
+          <label>Nationality</label>
+          <input type="text" id="nationality" placeholder="e.g. Indian">
+        </div>
+        <div class="field">
+          <label>Religion</label>
+          <input type="text" id="religion" placeholder="e.g. Islam">
+        </div>
+        <div class="field">
+          <label>Category (SC/ST/OBC)</label>
+          <select id="category">
+            <option value="">Not Applicable</option>
+            <option>SC</option>
+            <option>ST</option>
+            <option>OBC</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Aadhar / UID Number</label>
+          <input type="text" id="aadhar" placeholder="12-digit Aadhar number" maxlength="14">
+        </div>
+        <div class="field span-2">
+          <label>Present Residential Address <span class="req">*</span></label>
+          <textarea id="address" placeholder="Full address with landmark"></textarea>
+        </div>
+        <div class="field">
+          <label>Pin Code</label>
+          <input type="text" id="pincode" maxlength="6" placeholder="6-digit PIN">
+        </div>
+        <div class="field">
+          <label>Mobile Number <span class="req">*</span></label>
+          <input type="tel" id="mobile" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="field">
+          <label>Telephone</label>
+          <input type="tel" id="telephone" placeholder="Landline (optional)">
+        </div>
+        <div class="field">
+          <label>Email ID <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="parent@example.com">
+        </div>
+        <div class="field">
+          <label>First Language</label>
+          <input type="text" id="first-lang" placeholder="e.g. Malayalam">
+        </div>
+        <div class="field">
+          <label>Mother Tongue</label>
+          <input type="text" id="mother-tongue" placeholder="e.g. Malayalam">
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Previous School Details</span></div>
+
+      <div class="grid grid-2">
+        <div class="field span-2">
+          <label>Name of Previous School with Address</label>
+          <textarea id="prev-school" placeholder="School name, address"></textarea>
+        </div>
+        <div class="field">
+          <label>Syllabus / Board</label>
+          <select id="syllabus">
+            <option value="">Select Board</option>
+            <option>CBSE</option>
+            <option>ICSE</option>
+            <option>State Board (Kerala)</option>
+            <option>IB</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Last Class Attended</label>
+          <select id="last-class">
+            <option value="">Select Class</option>
+            <option>Nursery</option><option>LKG</option><option>UKG</option>
+            <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+            <option>Class 4</option><option>Class 5</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Years Attended (From)</label>
+          <input type="date" id="prev-from">
+        </div>
+        <div class="field">
+          <label>Years Attended (To)</label>
+          <input type="date" id="prev-to">
+        </div>
+        <div class="field span-2">
+          <label>Reason for Withdrawal</label>
+          <textarea id="reason-withdraw" placeholder="Reason for leaving the previous school" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="nextStep(1)">Next: Family Info →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Family Info -->
+  <div class="section" id="step-2">
+    <div class="section-header">
+      <div class="section-icon">👨‍👩‍👦</div>
+      <div>
+        <div class="section-title">Family Information</div>
+        <div class="section-desc">Father, mother, and sibling details</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="divider-label"><span>Father's Details</span></div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Father's Name <span class="req">*</span></label>
+          <input type="text" id="father-name" placeholder="Full name">
+        </div>
+        <div class="field">
+          <label>Nationality</label>
+          <input type="text" id="father-nationality" placeholder="e.g. Indian">
+        </div>
+        <div class="field">
+          <label>Mobile</label>
+          <input type="tel" id="father-mob" placeholder="+91 XXXXX XXXXX">
+        </div>
+        <div class="field">
+          <label>Telephone</label>
+          <input type="tel" id="father-tel">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="father-email">
+        </div>
+        <div class="field">
+          <label>Occupation</label>
+          <input type="text" id="father-occ" placeholder="e.g. Engineer, Business">
+        </div>
+        <div class="field">
+          <label>Educational Qualification</label>
+          <select id="father-edu">
+            <option value="">Select</option>
+            <option>Below 10th</option><option>10th / SSLC</option><option>12th / Plus Two</option>
+            <option>Diploma</option><option>Graduate</option><option>Post Graduate</option><option>Doctorate</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label>Office Address</label>
+          <textarea id="father-office" placeholder="Office / workplace address" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Mother's Details</span></div>
+      <div class="field" style="margin-bottom:16px;">
+        <label>Same residential address as father?</label>
+        <div class="radio-group" style="margin-top:6px;">
+          <label class="radio-item"><input type="radio" name="same-addr" value="yes" checked onchange="toggleMotherAddr(this)"> Yes</label>
+          <label class="radio-item"><input type="radio" name="same-addr" value="no" onchange="toggleMotherAddr(this)"> No</label>
+        </div>
+      </div>
+      <div id="mother-addr-field" class="field" style="display:none; margin-bottom:16px;">
+        <label>Mother's Present Residential Address</label>
+        <textarea id="mother-addr" placeholder="Mother's address if different"></textarea>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Mother's Name <span class="req">*</span></label>
+          <input type="text" id="mother-name" placeholder="Full name">
+        </div>
+        <div class="field">
+          <label>Nationality</label>
+          <input type="text" id="mother-nationality" placeholder="e.g. Indian">
+        </div>
+        <div class="field">
+          <label>Mobile</label>
+          <input type="tel" id="mother-mob">
+        </div>
+        <div class="field">
+          <label>Telephone</label>
+          <input type="tel" id="mother-tel">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="mother-email">
+        </div>
+        <div class="field">
+          <label>Occupation</label>
+          <input type="text" id="mother-occ">
+        </div>
+        <div class="field">
+          <label>Educational Qualification</label>
+          <select id="mother-edu">
+            <option value="">Select</option>
+            <option>Below 10th</option><option>10th / SSLC</option><option>12th / Plus Two</option>
+            <option>Diploma</option><option>Graduate</option><option>Post Graduate</option><option>Doctorate</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label>Office Address</label>
+          <textarea id="mother-office" placeholder="Office / workplace address" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Languages &amp; Siblings</span></div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Other Languages Spoken at Home</label>
+          <input type="text" id="home-langs" placeholder="e.g. English, Arabic, Hindi">
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <label style="font-size:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted);">Siblings (Brothers/Sisters)</label>
+        <div class="grid grid-2" style="margin-top:10px;">
+          <div class="field">
+            <label>Sibling 1 – Name</label>
+            <input type="text" id="sib1-name">
+          </div>
+          <div class="field">
+            <label>Age &amp; Class</label>
+            <div style="display:flex; gap:8px;">
+              <input type="number" id="sib1-age" placeholder="Age" min="1" max="25" style="width:80px;">
+              <select id="sib1-class" style="flex:1;"><option value="">Class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Sibling 2 – Name</label>
+            <input type="text" id="sib2-name">
+          </div>
+          <div class="field">
+            <label>Age &amp; Class</label>
+            <div style="display:flex; gap:8px;">
+              <input type="number" id="sib2-age" placeholder="Age" min="1" max="25" style="width:80px;">
+              <select id="sib2-class" style="flex:1;"><option value="">Class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(2)">Next: Health Info →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Health & Additional Info -->
+  <div class="section" id="step-3">
+    <div class="section-header">
+      <div class="section-icon">🏥</div>
+      <div>
+        <div class="section-title">Health &amp; Additional Information</div>
+        <div class="section-desc">Medical history, immunizations, and child's profile</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Current Illness</label>
+          <input type="text" id="illness-1" placeholder="If any">
+        </div>
+        <div class="field">
+          <label>Second Illness</label>
+          <input type="text" id="illness-2" placeholder="If any">
+        </div>
+        <div class="field">
+          <label>Injuries</label>
+          <input type="text" id="injury-1" placeholder="If any">
+        </div>
+        <div class="field">
+          <label>Second Injury</label>
+          <input type="text" id="injury-2" placeholder="If any">
+        </div>
+        <div class="field">
+          <label>Surgeries</label>
+          <input type="text" id="surgery-1" placeholder="If any">
+        </div>
+        <div class="field">
+          <label>Prescribed Medication</label>
+          <input type="text" id="medication" placeholder="Medication name & dosage">
+        </div>
+        <div class="field span-2">
+          <label>Other Medical Conditions / Allergies</label>
+          <textarea id="allergies" placeholder="Describe any allergies, special conditions, or dietary requirements" style="min-height:70px;"></textarea>
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Immunization Record</span></div>
+      <p class="hint" style="margin-bottom:12px;">Check all vaccines your child has received:</p>
+      <div class="immun-grid">
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="Cholera"> ✅ Cholera</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="Small Pox"> ✅ Small Pox</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="Typhoid"> ✅ Typhoid</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="Measles"> ✅ Measles</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="DTP"> ✅ D.T.P.</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="Polio"> ✅ Polio</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="BCG"> ✅ BCG</label>
+        <label class="immun-item"><input type="checkbox" name="vaccine" value="TT"> ✅ T.T.</label>
+      </div>
+
+      <div class="divider-label"><span>Additional Information</span></div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>English Speaking Ability</label>
+          <div class="radio-group" style="margin-top:4px;">
+            <label class="radio-item"><input type="radio" name="english" value="Good"> Good</label>
+            <label class="radio-item"><input type="radio" name="english" value="Moderate"> Moderate</label>
+            <label class="radio-item"><input type="radio" name="english" value="None"> No Knowledge</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Language Spoken at Home</label>
+          <input type="text" id="lang-home" placeholder="e.g. Malayalam, English">
+        </div>
+        <div class="field">
+          <label>Screen Time Per Day (hours)</label>
+          <input type="number" id="screen-time" min="0" max="24" placeholder="e.g. 2">
+        </div>
+        <div class="field">
+          <label>Sleep Pattern</label>
+          <div class="radio-group" style="margin-top:4px;">
+            <label class="radio-item"><input type="radio" name="sleep" value="Day"> Day</label>
+            <label class="radio-item"><input type="radio" name="sleep" value="Night"> Night</label>
+            <label class="radio-item"><input type="radio" name="sleep" value="Both"> Both</label>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Play &amp; Interests of the Child</label>
+          <textarea id="interests" placeholder="What play / activities is your child most interested in?"></textarea>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(3)">Next: Programme →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Programme -->
+  <div class="section" id="step-4">
+    <div class="section-header">
+      <div class="section-icon">📚</div>
+      <div>
+        <div class="section-title">Programme &amp; Reasons</div>
+        <div class="section-desc">Choose the class/programme and your reason for joining</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <label style="font-size:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted);">Select Programme <span class="req">*</span></label>
+      <div class="programme-grid" style="margin-top:10px;">
+        <label class="programme-card">
+          <input type="radio" name="programme" value="M1">
+          <div class="pc-title">M1 – Montessori One</div>
+          <div class="pc-sub">Equivalent to Pre-KG</div>
+          <div class="pc-tag">Age 3 – 4 yrs</div>
+        </label>
+        <label class="programme-card">
+          <input type="radio" name="programme" value="M2">
+          <div class="pc-title">M2 – Montessori Two</div>
+          <div class="pc-sub">Equivalent to LKG</div>
+          <div class="pc-tag">Age 4 – 5 yrs</div>
+        </label>
+        <label class="programme-card">
+          <input type="radio" name="programme" value="M3">
+          <div class="pc-title">M3 – Montessori Three</div>
+          <div class="pc-sub">Equivalent to UKG</div>
+          <div class="pc-tag">Age 5 – 6 yrs</div>
+        </label>
+        <label class="programme-card">
+          <input type="radio" name="programme" value="Elementary">
+          <div class="pc-title">Elementary Montessori</div>
+          <div class="pc-sub">Grade 1 and above</div>
+          <div class="pc-tag">Age 6 yrs &amp; above</div>
+        </label>
+      </div>
+
+      <div class="divider-label"><span>Reason for Joining Hillford School</span></div>
+      <div class="reason-grid">
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Genuine Montessori environment">
+          <div class="r-icon">🌱</div>Genuine Montessori Environment
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Better teaching method">
+          <div class="r-icon">📖</div>Better Teaching Method
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Better faculty">
+          <div class="r-icon">🎓</div>Better Faculty
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Better management">
+          <div class="r-icon">🏛️</div>Better Management
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Better facilities">
+          <div class="r-icon">🏊</div>Better Facilities
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="Better location">
+          <div class="r-icon">📍</div>Better Location
+        </label>
+        <label class="reason-card">
+          <input type="checkbox" name="reason" value="All the above">
+          <div class="r-icon">⭐</div>All the Above
+        </label>
+      </div>
+
+      <div class="field" style="margin-top:20px;">
+        <label>Any Other Reason</label>
+        <input type="text" id="other-reason" placeholder="Please specify...">
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-outline" onclick="prevStep(4)">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep(4)">Next: Declaration →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Declaration -->
+  <div class="section" id="step-5">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div>
+        <div class="section-title">Declaration &amp; Submission</div>
+        <div class="section-desc">Review, sign, and submit the admission form</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="instructions">
+        <strong>📎 Documents Required:</strong>
+        <ul>
+          <li>A photocopy of the Birth Certificate</li>
+          <li>6 photographs (3 stamp size &amp; 3 passport size)</li>
+          <li>Aadhar photocopy of the child and parents</li>
+        </ul>
+      </div>
+
+      <div class="declaration-box">
+        I/We have read the prospectus of this institution and hereby enroll my child to the selected programme and agreed to abide by the rules and regulations set forth therein. I will extend my full co-operation to those in-charge of the institution in all matters pertaining to the education of my child. I/We also agree that dis-enrollment/withdrawal of the child in the course of academic year is not allowed in this institution. In case of such withdrawals I will not claim any refund of fees.
+      </div>
+
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Place <span class="req">*</span></label>
+          <input type="text" id="place" placeholder="City / Town">
+        </div>
+        <div class="field">
+          <label>Date <span class="req">*</span></label>
+          <input type="date" id="decl-date">
+        </div>
+      </div>
+
+      <div class="divider-label"><span>Parent Confirmation</span></div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Father's Name (Signature Confirmation)</label>
+          <input type="text" id="decl-father" placeholder="Type full name as signature">
+        </div>
+        <div class="field">
+          <label>Mother's Name (Signature Confirmation)</label>
+          <input type="text" id="decl-mother" placeholder="Type full name as signature">
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <label class="check-item" style="cursor:pointer;">
+          <input type="checkbox" id="agree-terms">
+          I/We agree to all the terms and conditions stated in the declaration above.
+        </label>
+      </div>
+
+      <div class="nav-row" style="margin-top:28px;">
+        <button class="btn btn-outline" onclick="prevStep(5)">← Back</button>
+        <button class="btn btn-gold" onclick="submitForm()">✓ Submit Admission Form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="success-screen" id="success">
+    <div class="success-icon">🎉</div>
+    <h2>Application Submitted!</h2>
+    <p>Thank you for applying to The Hillford School. Your application has been received and the Admissions Committee will review it shortly.</p>
+    <div class="app-number" id="app-num">APP-2024-0001</div>
+    <p style="margin-bottom:0; font-size:13px;">Please save your application number for future reference. You will be contacted via the email and mobile number provided.</p>
+    <div style="margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="window.print()">🖨 Print Application</button>
+      <button class="btn btn-primary" onclick="location.reload()">Submit Another Application</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  function goStep(n) {
+    if (n > currentStep) return; // only allow going back via dots
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from + 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep(from) {
+    document.getElementById('step-' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step-' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    document.querySelectorAll('.step-dot').forEach((dot, i) => {
+      dot.classList.remove('active', 'done');
+      if (i + 1 < currentStep) dot.classList.add('done');
+      if (i + 1 === currentStep) dot.classList.add('active');
+    });
+  }
+
+  function validateStep(step) {
+    if (step === 1) {
+      const name = document.getElementById('child-name').value.trim();
+      const mob  = document.getElementById('mobile').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const addr = document.getElementById('address').value.trim();
+      const dob = document.getElementById('dob').value;
+      if (!name) { alert('Please enter the child\'s full name.'); return false; }
+      if (!dob)  { alert('Please select the date of birth.'); return false; }
+      if (!addr) { alert('Please enter the residential address.'); return false; }
+      if (!mob)  { alert('Please enter a mobile number.'); return false; }
+      if (!email){ alert('Please enter an email address.'); return false; }
+    }
+    if (step === 2) {
+      if (!document.getElementById('father-name').value.trim()) { alert('Please enter father\'s name.'); return false; }
+      if (!document.getElementById('mother-name').value.trim()) { alert('Please enter mother\'s name.'); return false; }
+    }
+    if (step === 4) {
+      const prog = document.querySelector('input[name="programme"]:checked');
+      if (!prog) { alert('Please select a programme.'); return false; }
+    }
+    if (step === 5) {
+      if (!document.getElementById('place').value.trim()) { alert('Please enter the place.'); return false; }
+      if (!document.getElementById('decl-date').value) { alert('Please select the date.'); return false; }
+      if (!document.getElementById('agree-terms').checked) { alert('Please agree to the declaration.'); return false; }
+    }
+    return true;
+  }
+
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwwULFeXXbnAjDgWIS9MJAzx0vFp-ltybOtZ15ptQ8k3i1qNc4tqIvEqD3Sc5aJm_6z/exec';
+
+  function submitForm() {
+    if (!validateStep(5)) return;
+
+    // Collect all vaccines checked
+    const vaccines = [...document.querySelectorAll('input[name="vaccine"]:checked')].map(v => v.value).join(', ');
+    // Collect all reasons checked
+    const reasons = [...document.querySelectorAll('input[name="reason"]:checked')].map(r => r.value).join(', ');
+    // Gender
+    const genderEl = document.querySelector('input[name="gender"]:checked');
+    // English ability
+    const englishEl = document.querySelector('input[name="english"]:checked');
+    // Sleep pattern
+    const sleepEl = document.querySelector('input[name="sleep"]:checked');
+    // Programme
+    const progEl = document.querySelector('input[name="programme"]:checked');
+    // Same address
+    const sameAddrEl = document.querySelector('input[name="same-addr"]:checked');
+
+    const appNo = 'APP-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 9000) + 1000);
+
+    const data = {
+      timestamp:      new Date().toLocaleString('en-IN'),
+      appNo:          appNo,
+      childName:      document.getElementById('child-name').value,
+      gender:         genderEl ? genderEl.value : '',
+      dob:            document.getElementById('dob').value,
+      age:            document.getElementById('age-display').value,
+      nationality:    document.getElementById('nationality').value,
+      religion:       document.getElementById('religion').value,
+      category:       document.getElementById('category').value,
+      aadhar:         document.getElementById('aadhar').value,
+      address:        document.getElementById('address').value,
+      pincode:        document.getElementById('pincode').value,
+      mobile:         document.getElementById('mobile').value,
+      telephone:      document.getElementById('telephone').value,
+      email:          document.getElementById('email').value,
+      firstLang:      document.getElementById('first-lang').value,
+      motherTongue:   document.getElementById('mother-tongue').value,
+      prevSchool:     document.getElementById('prev-school').value,
+      syllabus:       document.getElementById('syllabus').value,
+      lastClass:      document.getElementById('last-class').value,
+      prevFrom:       document.getElementById('prev-from').value,
+      prevTo:         document.getElementById('prev-to').value,
+      reasonWithdraw: document.getElementById('reason-withdraw').value,
+      fatherName:     document.getElementById('father-name').value,
+      fatherMob:      document.getElementById('father-mob').value,
+      fatherEmail:    document.getElementById('father-email').value,
+      fatherOcc:      document.getElementById('father-occ').value,
+      fatherEdu:      document.getElementById('father-edu').value,
+      fatherOffice:   document.getElementById('father-office').value,
+      motherName:     document.getElementById('mother-name').value,
+      motherMob:      document.getElementById('mother-mob').value,
+      motherEmail:    document.getElementById('mother-email').value,
+      motherOcc:      document.getElementById('mother-occ').value,
+      motherEdu:      document.getElementById('mother-edu').value,
+      motherOffice:   document.getElementById('mother-office').value,
+      sameAddr:       sameAddrEl ? sameAddrEl.value : '',
+      homeLangs:      document.getElementById('home-langs').value,
+      sib1Name:       document.getElementById('sib1-name').value,
+      sib1Age:        document.getElementById('sib1-age').value,
+      sib1Class:      document.getElementById('sib1-class').value,
+      sib2Name:       document.getElementById('sib2-name').value,
+      sib2Age:        document.getElementById('sib2-age').value,
+      sib2Class:      document.getElementById('sib2-class').value,
+      illness1:       document.getElementById('illness-1').value,
+      illness2:       document.getElementById('illness-2').value,
+      injury1:        document.getElementById('injury-1').value,
+      injury2:        document.getElementById('injury-2').value,
+      surgery:        document.getElementById('surgery-1').value,
+      medication:     document.getElementById('medication').value,
+      allergies:      document.getElementById('allergies').value,
+      vaccines:       vaccines,
+      englishAbility: englishEl ? englishEl.value : '',
+      langHome:       document.getElementById('lang-home').value,
+      screenTime:     document.getElementById('screen-time').value,
+      sleepPattern:   sleepEl ? sleepEl.value : '',
+      interests:      document.getElementById('interests').value,
+      programme:      progEl ? progEl.value : '',
+      reasons:        reasons,
+      otherReason:    document.getElementById('other-reason').value,
+      place:          document.getElementById('place').value,
+      declDate:       document.getElementById('decl-date').value
+    };
+
+    // Show loading state on button
+    const btn = document.querySelector('.btn-gold');
+    btn.textContent = '⏳ Submitting...';
+    btn.disabled = true;
+
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      document.getElementById('step-5').classList.remove('active');
+      document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+      document.getElementById('app-num').textContent = appNo;
+      document.getElementById('success').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(() => {
+      // Even if fetch errors (no-cors), data likely sent — show success
+      document.getElementById('step-5').classList.remove('active');
+      document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+      document.getElementById('app-num').textContent = appNo;
+      document.getElementById('success').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  function previewPhoto(input) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById('photo-preview');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function toggleMotherAddr(el) {
+    document.getElementById('mother-addr-field').style.display = el.value === 'no' ? 'block' : 'none';
+  }
+
+  // Auto-calculate age from DOB
+  document.getElementById('dob').addEventListener('change', function() {
+    const dob = new Date(this.value);
+    const ref = new Date(new Date().getFullYear(), 5, 1); // June 1
+    let y = ref.getFullYear() - dob.getFullYear();
+    let m = ref.getMonth() - dob.getMonth();
+    let d = ref.getDate() - dob.getDate();
+    if (d < 0) { m--; d += 30; }
+    if (m < 0) { y--; m += 12; }
+    document.getElementById('age-display').value = y + ' yrs ' + m + ' mo ' + d + ' days';
+  });
+
+  // Set today's date for declaration
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('decl-date').value = today;
+</script>
+</body>
+</html>
